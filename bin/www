@@ -10,6 +10,13 @@ const http = require('http');
 const config = require('dotenv').config();
 const displayRoute = require('express-routemap');
 const chalk = require('chalk');
+const mongoose = require('mongoose');
+const db = mongoose.connection;
+
+
+
+mongoose.connect(`mongodb://${process.env.MONGO_URI}/${process.env.MONGO_DB}`, {useNewUrlParser: true, useUnifiedTopology: true});
+
 /**
  * Get port from environment and store in Express.
  */
@@ -27,9 +34,12 @@ const server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port , ()=>{
-  console.log(chalk.green(`REST SERVER UP.LISTEN ON ${port} 👹👹👹`));
-  displayRoute(app)
+server.listen(port ,  async ()=>{
+  //await  
+     await db.once('open', ()=> {console.log(chalk.red(`MONGODB-CONECT: ${process.env.MONGO_DB} 🔐🔐🔐`))});
+     console.log(chalk.green(`REST SERVER UP.LISTEN ON ${port} 👹👹👹`));
+     displayRoute(app)
+  
 });
 server.on('error', onError);
 server.on('listening', onListening);
